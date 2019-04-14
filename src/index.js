@@ -1,10 +1,12 @@
 const THREE = require('three');
+const CTLS = require('three-orbitcontrols');
 
 // Scene, Camera
 const scene = new THREE.Scene();
 
 
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({antialias: true});
@@ -24,7 +26,7 @@ const coneGeometry3 = new THREE.ConeGeometry(0.7, 1, 6);
 const coneMaterial3 = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
 const cone3 = new THREE.Mesh(coneGeometry3, coneMaterial3);
 
-const cubeGeometry = new THREE.BoxGeometry(0.2, 0.6, 0.2);
+const cubeGeometry = new THREE.BoxGeometry(0.2, 1, 0.2);
 const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x654321 });
 const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 
@@ -38,8 +40,23 @@ light.position.y = 2;
 light.position.z = 0;
 scene.add(light);
 
-var targetObject = new THREE.Object3D();
+const targetObject = new THREE.Object3D();
 scene.add(targetObject);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+camera.position.y   = 0;
+camera.position.x   = 0;
+camera.position.z   = 2;
+camera.lookAt(cone.position);
+
+const controls = new CTLS(camera);
+controls.enableDamping = true;
+controls.dampingFactor = 0.15;
+controls.target.set(0, 0, 0);
+controls.rotateSpeed = 0.07;
+
+
 
 light.target = targetObject;
 
@@ -84,6 +101,7 @@ ground.position.y = -2;
 // Animation
 const animate = () => {
   requestAnimationFrame(animate);
+  controls.update();
   renderer.render(scene, camera);
 };
 
